@@ -571,6 +571,9 @@
         const pageFilename = window.location.pathname.split('/').pop().replace('.html', '');
         const MODEL_KEY = pageFilename; // Will be 'claude', 'deepseek', 'gemini', etc.
         
+        console.log('Page filename:', pageFilename);
+        console.log('Detected MODEL_KEY:', MODEL_KEY);
+        
         const MODELS = {
             'claude': { 
                 name: 'Claude 4.5 Sonnet', 
@@ -631,15 +634,34 @@
         loadModelData();
 
         function loadModelData() {
-            db.collection('positions').where('model', '==', MODEL_KEY).onSnapshot(snapshot => {
-                positions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                updatePage();
-            });
+            console.log('Loading data for model:', MODEL_KEY);
+            
+            db.collection('positions').where('model', '==', MODEL_KEY).onSnapshot(
+                snapshot => {
+                    positions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    console.log(`Loaded ${positions.length} positions for ${MODEL_KEY}`);
+                    updatePage();
+                },
+                error => {
+                    console.error('Error loading positions:', error);
+                }
+            );
 
-            db.collection('completedTrades').where('model', '==', MODEL_KEY).orderBy('timestamp', 'desc').limit(25).onSnapshot(snapshot => {
-                completedTrades = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                updatePage();
-            });
+            // Load completed trades without orderBy to avoid index requirement
+            db.collection('completedTrades').where('model', '==', MODEL_KEY).onSnapshot(
+                snapshot => {
+                    // Sort on client side instead
+                    completedTrades = snapshot.docs
+                        .map(doc => ({ id: doc.id, ...doc.data() }))
+                        .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+                        .slice(0, 25);
+                    console.log(`Loaded ${completedTrades.length} completed trades for ${MODEL_KEY}`);
+                    updatePage();
+                },
+                error => {
+                    console.error('Error loading completed trades:', error);
+                }
+            );
         }
 
         function updatePage() {
