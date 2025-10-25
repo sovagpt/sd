@@ -1066,87 +1066,122 @@
         function setupChart() {
             const ctx = document.getElementById('portfolioChart').getContext('2d');
             
+            // Preload model icons for badges
+            const modelIcons = {};
+            Object.entries(MODELS).forEach(([key, model]) => {
+                const img = new Image();
+                img.src = model.icon;
+                modelIcons[key] = img;
+            });
+            
             // Custom plugin for logo badges at end of lines
             const logoBadgePlugin = {
                 id: 'logoBadge',
                 afterDatasetsDraw: (chart) => {
                     const ctx = chart.ctx;
+                    const positions = [];
                     
+                    // First pass: collect all badge positions
                     chart.data.datasets.forEach((dataset, datasetIndex) => {
                         const meta = chart.getDatasetMeta(datasetIndex);
                         if (!meta.hidden && dataset.data.length > 0) {
                             const lastPoint = meta.data[meta.data.length - 1];
-                            
-                            // Draw connecting line to badge
-                            ctx.save();
-                            ctx.strokeStyle = dataset.borderColor;
-                            ctx.lineWidth = 2;
-                            ctx.beginPath();
-                            ctx.moveTo(lastPoint.x, lastPoint.y);
-                            ctx.lineTo(lastPoint.x + 30, lastPoint.y);
-                            ctx.stroke();
-                            
-                            // Draw badge background (circle)
-                            const badgeX = lastPoint.x + 50;
-                            const badgeY = lastPoint.y;
-                            const badgeRadius = 20;
-                            
-                            ctx.fillStyle = '#ffffff';
-                            ctx.strokeStyle = dataset.borderColor;
-                            ctx.lineWidth = 3;
-                            ctx.beginPath();
-                            ctx.arc(badgeX, badgeY, badgeRadius, 0, Math.PI * 2);
-                            ctx.fill();
-                            ctx.stroke();
-                            
-                            // Draw model icon
-                            const modelKey = Object.keys(MODELS)[datasetIndex];
-                            const model = MODELS[modelKey];
-                            
-                            if (model && model.icon) {
-                                const img = new Image();
-                                img.src = model.icon;
-                                
-                                // Check if image is loaded
-                                if (img.complete) {
-                                    ctx.save();
-                                    ctx.beginPath();
-                                    ctx.arc(badgeX, badgeY, badgeRadius - 3, 0, Math.PI * 2);
-                                    ctx.closePath();
-                                    ctx.clip();
-                                    ctx.drawImage(img, badgeX - (badgeRadius - 3), badgeY - (badgeRadius - 3), (badgeRadius - 3) * 2, (badgeRadius - 3) * 2);
-                                    ctx.restore();
-                                }
-                            }
-                            
-                            // Draw value label
-                            const value = dataset.data[dataset.data.length - 1].y;
-                            ctx.fillStyle = '#ffffff';
-                            ctx.strokeStyle = dataset.borderColor;
-                            ctx.lineWidth = 2;
-                            
-                            const labelText = '$' + value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                            ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
-                            const textWidth = ctx.measureText(labelText).width;
-                            
-                            const labelX = badgeX + 30;
-                            const labelY = badgeY;
-                            const labelPadding = 8;
-                            
-                            // Label background
-                            ctx.beginPath();
-                            ctx.roundRect(labelX - labelPadding, labelY - 12, textWidth + labelPadding * 2, 24, 6);
-                            ctx.fill();
-                            ctx.stroke();
-                            
-                            // Label text
-                            ctx.fillStyle = dataset.borderColor;
-                            ctx.textAlign = 'center';
-                            ctx.textBaseline = 'middle';
-                            ctx.fillText(labelText, labelX + textWidth / 2, labelY);
-                            
-                            ctx.restore();
+                            positions.push({
+                                datasetIndex,
+                                y: lastPoint.y,
+                                x: lastPoint.x
+                            });
                         }
+                    });
+
+                    // Sort by Y position to handle overlaps
+                    positions.sort((a, b) => a.y - b.y);
+
+                    // Adjust Y positions to prevent overlap
+                    const minSpacing = 50;
+                    for (let i = 1; i < positions.length; i++) {
+                        if (positions[i].y - positions[i-1].y < minSpacing) {
+                            positions[i].y = positions[i-1].y + minSpacing;
+                        }
+                    }
+
+                    // Second pass: draw badges with adjusted positions
+                    positions.forEach((pos) => {
+                        const dataset = chart.data.datasets[pos.datasetIndex];
+                        const meta = chart.getDatasetMeta(pos.datasetIndex);
+                        const lastPoint = meta.data[meta.data.length - 1];
+                        
+                        ctx.save();
+                        
+                        // Draw connecting line from chart to badge
+                        ctx.strokeStyle = dataset.borderColor;
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(lastPoint.x, lastPoint.y);
+                        ctx.lineTo(lastPoint.x, pos.y);
+                        ctx.lineTo(lastPoint.x + 25, pos.y);
+                        ctx.stroke();
+                        
+                        // Draw badge circle
+                        const badgeX = lastPoint.x + 45;
+                        const badgeY = pos.y;
+                        const badgeRadius = 18;
+                        
+                        ctx.fillStyle = '#ffffff';
+                        ctx.strokeStyle = dataset.borderColor;
+                        ctx.lineWidth = 3;
+                        ctx.beginPath();
+                        ctx.arc(badgeX, badgeY, badgeRadius, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.stroke();
+                        
+                        // Draw model icon
+                        const modelKey = Object.keys(MODELS)[pos.datasetIndex];
+                        const model = MODELS[modelKey];
+                        
+                        if (model && model.icon && chart.modelIcons && chart.modelIcons[modelKey]) {
+                            const img = chart.modelIcons[modelKey];
+                            if (img.complete) {
+                                ctx.save();
+                                ctx.beginPath();
+                                ctx.arc(badgeX, badgeY, badgeRadius - 3, 0, Math.PI * 2);
+                                ctx.closePath();
+                                ctx.clip();
+                                ctx.drawImage(img, badgeX - (badgeRadius - 3), badgeY - (badgeRadius - 3), (badgeRadius - 3) * 2, (badgeRadius - 3) * 2);
+                                ctx.restore();
+                            }
+                        }
+                        
+                        // Draw value label
+                        const value = dataset.data[dataset.data.length - 1].y;
+                        ctx.fillStyle = dataset.borderColor;
+                        ctx.strokeStyle = dataset.borderColor;
+                        ctx.lineWidth = 2;
+                        
+                        const labelText = '$' + value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                        ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+                        const textWidth = ctx.measureText(labelText).width;
+                        
+                        const labelX = badgeX + 25;
+                        const labelY = badgeY;
+                        const labelPadding = 6;
+                        
+                        // Label background
+                        ctx.fillStyle = '#ffffff';
+                        ctx.beginPath();
+                        const labelWidth = textWidth + labelPadding * 2;
+                        const labelHeight = 20;
+                        ctx.roundRect(labelX, labelY - labelHeight/2, labelWidth, labelHeight, 5);
+                        ctx.fill();
+                        ctx.stroke();
+                        
+                        // Label text
+                        ctx.fillStyle = dataset.borderColor;
+                        ctx.textAlign = 'left';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(labelText, labelX + labelPadding, labelY);
+                        
+                        ctx.restore();
                     });
                 }
             };
@@ -1190,7 +1225,7 @@
                     maintainAspectRatio: false,
                     layout: {
                         padding: {
-                            right: 150  // Make room for badges and labels
+                            right: 200  // Make room for badges and labels
                         }
                     },
                     plugins: {
@@ -1223,15 +1258,20 @@
                                 unit: 'hour',
                                 displayFormats: {
                                     hour: 'MMM dd HH:mm'
-                                }
+                                },
+                                tooltipFormat: 'MMM dd, HH:mm'
                             },
+                            min: Date.now() - (24 * 60 * 60 * 1000), // Always show last 24 hours minimum
                             grid: { 
                                 color: '#f0f0f0',
                                 drawBorder: false
                             },
                             ticks: { 
                                 color: '#999',
-                                font: { family: '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif', size: 11 }
+                                font: { family: '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif', size: 11 },
+                                maxRotation: 0,
+                                autoSkip: true,
+                                maxTicksLimit: 12
                             }
                         },
                         y: {
@@ -1256,6 +1296,9 @@
                 },
                 plugins: [hoverLinePlugin, logoBadgePlugin]
             });
+            
+            // Store preloaded icons on chart instance
+            chart.modelIcons = modelIcons;
         }
 
         function loadData() {
@@ -1357,55 +1400,59 @@
         function updateChart() {
             const datasets = [];
             
-            // Get all timestamps across all models
-            const allTimestamps = new Set();
+            // Get the earliest timestamp to establish a baseline
+            let earliestTime = Date.now();
             Object.keys(MODELS).forEach(key => {
                 const history = portfolioHistory[key] || [];
-                history.forEach(h => allTimestamps.add(h.timestamp));
+                if (history.length > 0) {
+                    const firstTimestamp = Math.min(...history.map(h => h.timestamp));
+                    if (firstTimestamp < earliestTime) {
+                        earliestTime = firstTimestamp;
+                    }
+                }
             });
 
-            const sortedTimestamps = Array.from(allTimestamps).sort((a, b) => a - b);
-            
+            // If no history exists, use 24 hours ago
+            if (earliestTime === Date.now()) {
+                earliestTime = Date.now() - (24 * 60 * 60 * 1000);
+            }
+
+            // Create datasets for each model
             Object.entries(MODELS).forEach(([key, model]) => {
                 const history = portfolioHistory[key] || [];
                 const data = [];
 
-                // Start with initial capital
-                let lastValue = STARTING_CAPITAL;
-                
-                // If no history, just show flat line at starting capital
-                if (history.length === 0) {
-                    data.push({
-                        x: new Date(Date.now() - 24 * 60 * 60 * 1000),
-                        y: STARTING_CAPITAL
-                    });
-                    data.push({
-                        x: new Date(),
-                        y: STARTING_CAPITAL
-                    });
-                } else {
-                    // Add historical data points
-                    history.forEach(h => {
+                // Always start from the earliest time with starting capital
+                data.push({
+                    x: new Date(earliestTime),
+                    y: STARTING_CAPITAL
+                });
+
+                // Add historical data points if they exist
+                if (history.length > 0) {
+                    // Sort by timestamp
+                    const sortedHistory = [...history].sort((a, b) => a.timestamp - b.timestamp);
+                    
+                    sortedHistory.forEach(h => {
                         data.push({
                             x: new Date(h.timestamp),
                             y: h.value
                         });
-                        lastValue = h.value;
-                    });
-
-                    // Add current value
-                    const currentValue = calculatePortfolioValue(key);
-                    data.push({
-                        x: new Date(),
-                        y: currentValue
                     });
                 }
+
+                // Add current value at current time
+                const currentValue = calculatePortfolioValue(key);
+                data.push({
+                    x: new Date(),
+                    y: currentValue
+                });
 
                 datasets.push({
                     label: model.name,
                     data: data,
                     borderColor: model.color,
-                    originalColor: model.color, // Store original color for hover plugin
+                    originalColor: model.color,
                     backgroundColor: model.color + '20',
                     borderWidth: 2.5,
                     pointRadius: 0,
@@ -1413,13 +1460,13 @@
                     pointHoverBackgroundColor: model.color,
                     pointHoverBorderColor: '#ffffff',
                     pointHoverBorderWidth: 2,
-                    tension: 0.1,
+                    tension: 0.4,
                     fill: false
                 });
             });
 
             chart.data.datasets = datasets;
-            chart.update('none'); // Update without animation for performance
+            chart.update('none');
         }
 
         function updatePerformanceDisplay() {
