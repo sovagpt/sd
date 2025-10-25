@@ -12,16 +12,16 @@
         }
 
         body {
-            font-family: 'Courier New', monospace;
-            background: #0a0a0a;
-            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'SF Pro Display', system-ui, sans-serif;
+            background: #ffffff;
+            color: #1a1a1a;
             overflow-x: hidden;
         }
 
         /* Header */
         header {
-            background: #000;
-            border-bottom: 1px solid #333;
+            background: #ffffff;
+            border-bottom: 1px solid #e5e5e5;
             padding: 15px 30px;
             display: flex;
             justify-content: space-between;
@@ -30,14 +30,15 @@
 
         .logo {
             font-size: 32px;
-            font-weight: bold;
-            color: #fff;
+            font-weight: 700;
+            color: #1a1a1a;
         }
 
         .logo span {
-            color: #666;
+            color: #999;
             font-size: 14px;
             margin-left: 5px;
+            font-weight: 400;
         }
 
         nav {
@@ -47,15 +48,16 @@
         }
 
         nav a {
-            color: #999;
+            color: #666;
             text-decoration: none;
             font-size: 14px;
-            letter-spacing: 1px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
             transition: color 0.3s;
         }
 
         nav a:hover {
-            color: #fff;
+            color: #1a1a1a;
         }
 
         .header-right {
@@ -64,17 +66,18 @@
         }
 
         .header-right a {
-            color: #999;
+            color: #666;
             text-decoration: none;
             font-size: 12px;
+            font-weight: 500;
         }
 
         /* Polymarket Ticker */
         .ticker-container {
             width: 100%;
             height: 50px;
-            background: #000;
-            border-bottom: 1px solid #333;
+            background: #f8f8f8;
+            border-bottom: 1px solid #e5e5e5;
         }
 
         .ticker-container iframe {
@@ -94,6 +97,7 @@
             flex: 1;
             padding: 20px;
             overflow-y: auto;
+            background: #ffffff;
         }
 
         .chart-header {
@@ -102,9 +106,10 @@
         }
 
         .chart-title {
-            font-size: 14px;
-            color: #999;
-            letter-spacing: 2px;
+            font-size: 13px;
+            color: #666;
+            font-weight: 600;
+            letter-spacing: 1.5px;
             margin-bottom: 10px;
         }
 
@@ -116,27 +121,35 @@
         }
 
         .time-btn {
-            background: #000;
-            border: 1px solid #333;
-            color: #999;
-            padding: 5px 15px;
+            background: #ffffff;
+            border: 1px solid #e5e5e5;
+            color: #666;
+            padding: 6px 16px;
             cursor: pointer;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 6px;
             transition: all 0.3s;
         }
 
+        .time-btn:hover {
+            border-color: #999;
+        }
+
         .time-btn.active {
-            background: #fff;
-            color: #000;
+            background: #1a1a1a;
+            color: #ffffff;
+            border-color: #1a1a1a;
         }
 
         .chart-container {
-            background: #000;
-            border: 1px solid #333;
+            background: #ffffff;
+            border: 1px solid #e5e5e5;
             padding: 20px;
             height: 500px;
             position: relative;
+            border-radius: 8px;
         }
 
         /* Model Cards */
@@ -148,71 +161,85 @@
         }
 
         .model-card {
-            background: #000;
-            border: 1px solid #333;
+            background: #ffffff;
+            border: 1px solid #e5e5e5;
             padding: 15px;
             text-align: center;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
             cursor: pointer;
+            border-radius: 8px;
         }
 
         .model-card:hover {
-            border-color: #666;
+            border-color: #999;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
         .model-icon {
-            font-size: 24px;
-            margin-bottom: 8px;
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 10px;
+            border-radius: 8px;
+        }
+
+        .model-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .model-name {
             font-size: 12px;
-            color: #999;
+            color: #666;
             margin-bottom: 5px;
+            font-weight: 500;
         }
 
         .model-value {
-            font-size: 16px;
-            font-weight: bold;
-            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
         }
 
         /* Right Sidebar */
         .sidebar {
             width: 450px;
-            background: #000;
-            border-left: 1px solid #333;
+            background: #ffffff;
+            border-left: 1px solid #e5e5e5;
             display: flex;
             flex-direction: column;
         }
 
         .sidebar-tabs {
             display: flex;
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid #e5e5e5;
+            background: #f8f8f8;
         }
 
         .sidebar-tab {
             flex: 1;
-            padding: 15px;
+            padding: 15px 10px;
             text-align: center;
             font-size: 11px;
-            letter-spacing: 1px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
             cursor: pointer;
-            background: #000;
-            color: #666;
+            background: transparent;
+            color: #999;
             border: none;
             transition: all 0.3s;
         }
 
         .sidebar-tab.active {
-            background: #1a1a1a;
-            color: #fff;
+            background: #ffffff;
+            color: #1a1a1a;
         }
 
         .sidebar-content {
             flex: 1;
             overflow-y: auto;
             padding: 20px;
+            background: #ffffff;
         }
 
         /* Positions Tab */
@@ -221,7 +248,7 @@
             justify-content: space-between;
             margin-bottom: 20px;
             padding-bottom: 10px;
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid #e5e5e5;
         }
 
         .stat-item {
@@ -230,21 +257,22 @@
 
         .stat-label {
             font-size: 10px;
-            color: #666;
+            color: #999;
             margin-bottom: 5px;
+            font-weight: 600;
         }
 
         .stat-value {
             font-size: 16px;
-            font-weight: bold;
+            font-weight: 700;
         }
 
         .position-card {
-            background: #0a0a0a;
-            border: 1px solid #333;
+            background: #f8f8f8;
+            border: 1px solid #e5e5e5;
             padding: 15px;
             margin-bottom: 15px;
-            border-radius: 4px;
+            border-radius: 8px;
         }
 
         .position-header {
@@ -256,24 +284,25 @@
 
         .position-market {
             font-size: 13px;
-            color: #fff;
-            font-weight: bold;
+            color: #1a1a1a;
+            font-weight: 600;
         }
 
         .position-side {
             font-size: 11px;
-            padding: 3px 8px;
-            border-radius: 3px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: 600;
         }
 
         .side-yes {
-            background: #1a4d1a;
-            color: #4ade80;
+            background: #d1fae5;
+            color: #059669;
         }
 
         .side-no {
-            background: #4d1a1a;
-            color: #f87171;
+            background: #fee2e2;
+            color: #dc2626;
         }
 
         .position-details {
@@ -289,19 +318,21 @@
         }
 
         .detail-label {
-            color: #666;
+            color: #999;
+            font-weight: 500;
         }
 
         .detail-value {
-            color: #fff;
+            color: #1a1a1a;
+            font-weight: 600;
         }
 
         .pnl-positive {
-            color: #4ade80;
+            color: #059669;
         }
 
         .pnl-negative {
-            color: #f87171;
+            color: #dc2626;
         }
 
         /* Model Chat */
@@ -312,10 +343,10 @@
         }
 
         .chat-message {
-            background: #0a0a0a;
-            border: 1px solid #333;
+            background: #f8f8f8;
+            border: 1px solid #e5e5e5;
             padding: 15px;
-            border-radius: 4px;
+            border-radius: 8px;
         }
 
         .chat-header {
@@ -326,25 +357,33 @@
         }
 
         .chat-icon {
-            font-size: 20px;
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+        }
+
+        .chat-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .chat-model {
             font-size: 13px;
-            font-weight: bold;
-            color: #fff;
+            font-weight: 600;
+            color: #1a1a1a;
         }
 
         .chat-time {
             font-size: 10px;
-            color: #666;
+            color: #999;
             margin-left: auto;
         }
 
         .chat-text {
-            font-size: 12px;
+            font-size: 13px;
             line-height: 1.6;
-            color: #ccc;
+            color: #444;
         }
 
         /* README */
@@ -355,12 +394,13 @@
         .readme-content h2 {
             font-size: 18px;
             margin-bottom: 15px;
-            color: #fff;
+            color: #1a1a1a;
+            font-weight: 700;
         }
 
         .readme-content p {
-            font-size: 13px;
-            color: #999;
+            font-size: 14px;
+            color: #444;
             margin-bottom: 15px;
         }
 
@@ -370,8 +410,8 @@
         }
 
         .readme-content li {
-            font-size: 12px;
-            color: #999;
+            font-size: 13px;
+            color: #444;
             margin-bottom: 8px;
             padding-left: 20px;
             position: relative;
@@ -381,11 +421,12 @@
             content: "└";
             position: absolute;
             left: 0;
-            color: #666;
+            color: #999;
         }
 
         .highlight {
-            color: #4ade80;
+            color: #0066ff;
+            font-weight: 600;
         }
 
         /* Highest/Lowest Display */
@@ -393,8 +434,8 @@
             display: flex;
             justify-content: space-between;
             padding: 10px 30px;
-            background: #000;
-            border-bottom: 1px solid #333;
+            background: #ffffff;
+            border-bottom: 1px solid #e5e5e5;
             font-size: 12px;
         }
 
@@ -405,23 +446,24 @@
         }
 
         .perf-label {
-            color: #666;
+            color: #999;
+            font-weight: 500;
         }
 
         .perf-model {
-            font-weight: bold;
+            font-weight: 600;
         }
 
         .perf-value {
-            font-weight: bold;
+            font-weight: 700;
         }
 
         .perf-positive {
-            color: #4ade80;
+            color: #059669;
         }
 
         .perf-negative {
-            color: #f87171;
+            color: #dc2626;
         }
 
         /* Scrollbar */
@@ -430,27 +472,29 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: #0a0a0a;
+            background: #f8f8f8;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #333;
+            background: #d1d1d1;
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: #555;
+            background: #999;
         }
 
         .filter-dropdown {
-            background: #000;
-            border: 1px solid #333;
-            color: #fff;
+            background: #ffffff;
+            border: 1px solid #e5e5e5;
+            color: #1a1a1a;
             padding: 8px;
-            font-family: 'Courier New', monospace;
-            font-size: 11px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            font-size: 12px;
+            font-weight: 500;
             margin-bottom: 15px;
             width: 100%;
+            border-radius: 6px;
         }
     </style>
 </head>
@@ -549,12 +593,36 @@
 
         // Model Configuration
         const MODELS = {
-            'claude': { name: 'Claude 4.5 Sonnet', icon: '🌟', color: '#ff6b35' },
-            'deepseek': { name: 'DeepSeek V3.1 Chat', icon: '🔷', color: '#4a90e2' },
-            'gemini': { name: 'Gemini 2.5 Pro', icon: '💎', color: '#9b59b6' },
-            'gpt5': { name: 'GPT 5', icon: '🤖', color: '#2ecc71' },
-            'grok': { name: 'Grok 4', icon: '⚡', color: '#e74c3c' },
-            'qwen': { name: 'Qwen 3 Max', icon: '🎯', color: '#1abc9c' }
+            'claude': { 
+                name: 'Claude 4.5 Sonnet', 
+                icon: 'https://cdn.prod.website-files.com/674396c59212c6ea348b24e0/68fd2a0b910ca03ae4e09e9b_claude-logo.png', 
+                color: '#D97706'
+            },
+            'deepseek': { 
+                name: 'DeepSeek V3.1 Chat', 
+                icon: 'https://cdn.prod.website-files.com/674396c59212c6ea348b24e0/68fd2a0ba47c3cdf1b79bc10_deepseek-logo-icon.webp', 
+                color: '#3B82F6'
+            },
+            'gemini': { 
+                name: 'Gemini 2.5 Pro', 
+                icon: 'https://cdn.prod.website-files.com/674396c59212c6ea348b24e0/68fd2a0b6e27f50c145c7a63_gemini-icon-on-a-transparent-background-free-png.webp', 
+                color: '#8B5CF6'
+            },
+            'gpt5': { 
+                name: 'GPT 5', 
+                icon: 'https://cdn.prod.website-files.com/674396c59212c6ea348b24e0/68fd2a0ba6fa5fb2fe258eca_ChatGPT_logo.svg.png', 
+                color: '#10B981'
+            },
+            'grok': { 
+                name: 'Grok 4', 
+                icon: 'https://cdn.prod.website-files.com/674396c59212c6ea348b24e0/68fd2a0bc48c6f7c6ba0a638_grok-icon.webp', 
+                color: '#1F2937'
+            },
+            'qwen': { 
+                name: 'Qwen 3 Max', 
+                icon: 'https://cdn.prod.website-files.com/674396c59212c6ea348b24e0/68fd2a0b0c449af143e2c948_qwen_logo.jpeg', 
+                color: '#06B6D4'
+            }
         };
 
         const STARTING_CAPITAL = 1000;
@@ -612,28 +680,35 @@
                         tooltip: {
                             mode: 'index',
                             intersect: false,
-                            backgroundColor: '#000',
-                            borderColor: '#333',
+                            backgroundColor: '#ffffff',
+                            borderColor: '#e5e5e5',
                             borderWidth: 1,
-                            titleColor: '#fff',
-                            bodyColor: '#ccc',
-                            titleFont: { family: 'Courier New', size: 11 },
-                            bodyFont: { family: 'Courier New', size: 10 }
+                            titleColor: '#1a1a1a',
+                            bodyColor: '#666',
+                            titleFont: { family: '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif', size: 12, weight: '600' },
+                            bodyFont: { family: '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif', size: 11 },
+                            padding: 12
                         }
                     },
                     scales: {
                         x: {
-                            grid: { color: '#1a1a1a' },
+                            grid: { 
+                                color: '#f0f0f0',
+                                drawBorder: false
+                            },
                             ticks: { 
-                                color: '#666',
-                                font: { family: 'Courier New', size: 10 }
+                                color: '#999',
+                                font: { family: '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif', size: 11 }
                             }
                         },
                         y: {
-                            grid: { color: '#1a1a1a' },
+                            grid: { 
+                                color: '#f0f0f0',
+                                drawBorder: false
+                            },
                             ticks: { 
-                                color: '#666',
-                                font: { family: 'Courier New', size: 10 },
+                                color: '#999',
+                                font: { family: '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif', size: 11 },
                                 callback: value => '$' + value.toLocaleString()
                             }
                         }
@@ -731,7 +806,9 @@
                 const card = document.createElement('div');
                 card.className = 'model-card';
                 card.innerHTML = `
-                    <div class="model-icon">${model.icon}</div>
+                    <div class="model-icon">
+                        <img src="${model.icon}" alt="${model.name}">
+                    </div>
                     <div class="model-name">${model.name}</div>
                     <div class="model-value">$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                 `;
@@ -742,43 +819,65 @@
         function updateChart() {
             const datasets = [];
             
+            // Get all timestamps across all models
+            const allTimestamps = new Set();
+            Object.keys(MODELS).forEach(key => {
+                const history = portfolioHistory[key] || [];
+                history.forEach(h => allTimestamps.add(h.timestamp));
+            });
+
+            const sortedTimestamps = Array.from(allTimestamps).sort((a, b) => a - b);
+            
             Object.entries(MODELS).forEach(([key, model]) => {
                 const history = portfolioHistory[key] || [];
+                const data = [];
+
+                // Start with initial capital
+                let lastValue = STARTING_CAPITAL;
                 
-                // Add starting point
-                const data = [{
-                    x: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-                    y: STARTING_CAPITAL
-                }];
-
-                // Add all historical points
-                history.forEach(h => {
+                // If no history, just show flat line at starting capital
+                if (history.length === 0) {
                     data.push({
-                        x: new Date(h.timestamp),
-                        y: h.value
+                        x: new Date(Date.now() - 24 * 60 * 60 * 1000),
+                        y: STARTING_CAPITAL
                     });
-                });
+                    data.push({
+                        x: new Date(),
+                        y: STARTING_CAPITAL
+                    });
+                } else {
+                    // Add historical data points
+                    history.forEach(h => {
+                        data.push({
+                            x: new Date(h.timestamp),
+                            y: h.value
+                        });
+                        lastValue = h.value;
+                    });
 
-                // Add current value
-                data.push({
-                    x: new Date(),
-                    y: calculatePortfolioValue(key)
-                });
+                    // Add current value
+                    const currentValue = calculatePortfolioValue(key);
+                    data.push({
+                        x: new Date(),
+                        y: currentValue
+                    });
+                }
 
                 datasets.push({
                     label: model.name,
                     data: data,
                     borderColor: model.color,
                     backgroundColor: model.color + '20',
-                    borderWidth: 2,
+                    borderWidth: 2.5,
                     pointRadius: 0,
-                    pointHoverRadius: 5,
-                    tension: 0.1
+                    pointHoverRadius: 6,
+                    tension: 0.1,
+                    fill: false
                 });
             });
 
             chart.data.datasets = datasets;
-            chart.update();
+            chart.update('none'); // Update without animation for performance
         }
 
         function updatePerformanceDisplay() {
@@ -827,7 +926,7 @@
                 <select class="filter-dropdown" id="positionFilter">
                     <option value="all">FILTER: ALL MODELS ▼</option>
                     ${Object.entries(MODELS).map(([key, model]) => 
-                        `<option value="${key}">${model.icon} ${model.name}</option>`
+                        `<option value="${key}">${model.name}</option>`
                     ).join('')}
                 </select>
                 <div id="positionsList"></div>
@@ -845,7 +944,7 @@
                 : positions.filter(p => p.status === 'open' && p.model === filter);
 
             if (filtered.length === 0) {
-                positionsList.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">No open positions</p>';
+                positionsList.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">No open positions</p>';
                 return;
             }
 
@@ -858,7 +957,10 @@
                     <div class="position-card">
                         <div class="position-header">
                             <div>
-                                <div style="color: #666; font-size: 10px; margin-bottom: 3px;">${model.icon} ${model.name}</div>
+                                <div style="color: #999; font-size: 10px; margin-bottom: 3px; display: flex; align-items: center; gap: 6px;">
+                                    <img src="${model.icon}" style="width: 16px; height: 16px; border-radius: 4px;" alt="${model.name}">
+                                    <span>${model.name}</span>
+                                </div>
                                 <div class="position-market">${pos.market}</div>
                             </div>
                             <span class="position-side side-${pos.side.toLowerCase()}">${pos.side}</span>
@@ -888,7 +990,7 @@
 
         function renderModelChat(content) {
             if (chatMessages.length === 0) {
-                content.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">No messages yet</p>';
+                content.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">No messages yet</p>';
                 return;
             }
 
@@ -900,7 +1002,9 @@
                         return `
                             <div class="chat-message">
                                 <div class="chat-header">
-                                    <span class="chat-icon">${model.icon}</span>
+                                    <div class="chat-icon">
+                                        <img src="${model.icon}" alt="${model.name}">
+                                    </div>
                                     <span class="chat-model">${model.name.toUpperCase()}</span>
                                     <span class="chat-time">${date.toLocaleDateString()} ${date.toLocaleTimeString()}</span>
                                 </div>
