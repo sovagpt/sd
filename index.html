@@ -1261,7 +1261,6 @@
                                 },
                                 tooltipFormat: 'MMM dd, HH:mm'
                             },
-                            min: Date.now() - (24 * 60 * 60 * 1000), // Always show last 24 hours minimum
                             grid: { 
                                 color: '#f0f0f0',
                                 drawBorder: false
@@ -1400,40 +1399,29 @@
         function updateChart() {
             const datasets = [];
             
-            // Get the earliest timestamp to establish a baseline
-            let earliestTime = Date.now();
-            Object.keys(MODELS).forEach(key => {
-                const history = portfolioHistory[key] || [];
-                if (history.length > 0) {
-                    const firstTimestamp = Math.min(...history.map(h => h.timestamp));
-                    if (firstTimestamp < earliestTime) {
-                        earliestTime = firstTimestamp;
-                    }
-                }
-            });
-
-            // If no history exists, use 24 hours ago
-            if (earliestTime === Date.now()) {
-                earliestTime = Date.now() - (24 * 60 * 60 * 1000);
-            }
-
+            // Set time range: last 24 hours
+            const now = Date.now();
+            const startTime = now - (24 * 60 * 60 * 1000); // 24 hours ago
+            
             // Create datasets for each model
             Object.entries(MODELS).forEach(([key, model]) => {
                 const history = portfolioHistory[key] || [];
                 const data = [];
 
-                // Always start from the earliest time with starting capital
+                // ALWAYS start from 24 hours ago at $500
                 data.push({
-                    x: new Date(earliestTime),
+                    x: new Date(startTime),
                     y: STARTING_CAPITAL
                 });
 
-                // Add historical data points if they exist
+                // Add any historical data points that exist
                 if (history.length > 0) {
-                    // Sort by timestamp
-                    const sortedHistory = [...history].sort((a, b) => a.timestamp - b.timestamp);
+                    // Filter history to only last 24 hours and sort
+                    const recentHistory = history
+                        .filter(h => h.timestamp >= startTime)
+                        .sort((a, b) => a.timestamp - b.timestamp);
                     
-                    sortedHistory.forEach(h => {
+                    recentHistory.forEach(h => {
                         data.push({
                             x: new Date(h.timestamp),
                             y: h.value
@@ -1441,10 +1429,10 @@
                     });
                 }
 
-                // Add current value at current time
+                // ALWAYS end at current time with current value
                 const currentValue = calculatePortfolioValue(key);
                 data.push({
-                    x: new Date(),
+                    x: new Date(now),
                     y: currentValue
                 });
 
@@ -1466,6 +1454,11 @@
             });
 
             chart.data.datasets = datasets;
+            
+            // Force update the time scale to show full 24 hours
+            chart.options.scales.x.min = new Date(startTime);
+            chart.options.scales.x.max = new Date(now);
+            
             chart.update('none');
         }
 
