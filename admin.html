@@ -480,7 +480,7 @@
             }
         };
 
-        const STARTING_CAPITAL = 1000;
+        const STARTING_CAPITAL = 500;
 
         let positions = [];
         let apiKey = localStorage.getItem('anthropicApiKey') || '';
@@ -622,16 +622,6 @@
                     message: reasoning,
                     positionId: positionRef.id,
                     timestamp: Date.now()
-                });
-
-                // Update portfolio history
-                const currentValue = await calculatePortfolioValue(model);
-                await db.collection('portfolioHistory').add({
-                    model: model,
-                    value: currentValue,
-                    timestamp: Date.now(),
-                    event: 'bet_placed',
-                    positionId: positionRef.id
                 });
 
                 showStatus('Bet placed successfully!', 'success');
@@ -836,7 +826,7 @@ Your reasoning:`;
                     model: position.model,
                     value: currentValue,
                     timestamp: Date.now(),
-                    event: 'position_closed',
+                    event: 'trade_completed',
                     positionId: positionId
                 });
 
@@ -882,7 +872,7 @@ Your reasoning:`;
                     model: position.model,
                     value: currentValue,
                     timestamp: Date.now(),
-                    event: 'position_closed',
+                    event: 'trade_completed',
                     positionId: positionId
                 });
 
