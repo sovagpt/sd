@@ -1023,7 +1023,7 @@
 
             tbody.innerHTML = modelsData.map(entry => {
                 return `
-                    <tr onclick="openModelModal('${entry.key}')" style="cursor: pointer;">
+                    <tr onclick="window.location.href='${entry.key}.html'" style="cursor: pointer;">
                         <td>
                             <div class="model-name-cell">
                                 <img src="${entry.model.icon}" alt="${entry.model.name}">
