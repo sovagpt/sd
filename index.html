@@ -930,7 +930,7 @@
             // Leaderboard link
             document.getElementById('leaderboardLink').addEventListener('click', (e) => {
                 e.preventDefault();
-                openLeaderboardModal();
+                window.location.href = 'leaderboard.html';
             });
 
             // Models link
@@ -1252,7 +1252,7 @@
 
                 const card = document.createElement('div');
                 card.className = 'model-card';
-                card.onclick = () => openModelModal(key);
+                card.onclick = () => window.location.href = key + '.html';
                 card.innerHTML = `
                     <div class="model-icon">
                         <img src="${model.icon}" alt="${model.name}">
@@ -1511,7 +1511,10 @@
                     <div class="position-card">
                         <div class="position-header">
                             <div>
-                                <div style="color: #666; font-size: 10px; margin-bottom: 3px;">${model.icon} ${model.name}</div>
+                                <div style="color: #999; font-size: 10px; margin-bottom: 3px; display: flex; align-items: center; gap: 6px;">
+                                    <img src="${model.icon}" style="width: 16px; height: 16px; border-radius: 4px;" alt="${model.name}">
+                                    <span>${model.name}</span>
+                                </div>
                                 <div class="position-market">${trade.market}</div>
                             </div>
                             <span class="position-side ${resultClass}">${resultBadge}</span>
