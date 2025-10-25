@@ -1066,6 +1066,91 @@
         function setupChart() {
             const ctx = document.getElementById('portfolioChart').getContext('2d');
             
+            // Custom plugin for logo badges at end of lines
+            const logoBadgePlugin = {
+                id: 'logoBadge',
+                afterDatasetsDraw: (chart) => {
+                    const ctx = chart.ctx;
+                    
+                    chart.data.datasets.forEach((dataset, datasetIndex) => {
+                        const meta = chart.getDatasetMeta(datasetIndex);
+                        if (!meta.hidden && dataset.data.length > 0) {
+                            const lastPoint = meta.data[meta.data.length - 1];
+                            
+                            // Draw connecting line to badge
+                            ctx.save();
+                            ctx.strokeStyle = dataset.borderColor;
+                            ctx.lineWidth = 2;
+                            ctx.beginPath();
+                            ctx.moveTo(lastPoint.x, lastPoint.y);
+                            ctx.lineTo(lastPoint.x + 30, lastPoint.y);
+                            ctx.stroke();
+                            
+                            // Draw badge background (circle)
+                            const badgeX = lastPoint.x + 50;
+                            const badgeY = lastPoint.y;
+                            const badgeRadius = 20;
+                            
+                            ctx.fillStyle = '#ffffff';
+                            ctx.strokeStyle = dataset.borderColor;
+                            ctx.lineWidth = 3;
+                            ctx.beginPath();
+                            ctx.arc(badgeX, badgeY, badgeRadius, 0, Math.PI * 2);
+                            ctx.fill();
+                            ctx.stroke();
+                            
+                            // Draw model icon
+                            const modelKey = Object.keys(MODELS)[datasetIndex];
+                            const model = MODELS[modelKey];
+                            
+                            if (model && model.icon) {
+                                const img = new Image();
+                                img.src = model.icon;
+                                
+                                // Check if image is loaded
+                                if (img.complete) {
+                                    ctx.save();
+                                    ctx.beginPath();
+                                    ctx.arc(badgeX, badgeY, badgeRadius - 3, 0, Math.PI * 2);
+                                    ctx.closePath();
+                                    ctx.clip();
+                                    ctx.drawImage(img, badgeX - (badgeRadius - 3), badgeY - (badgeRadius - 3), (badgeRadius - 3) * 2, (badgeRadius - 3) * 2);
+                                    ctx.restore();
+                                }
+                            }
+                            
+                            // Draw value label
+                            const value = dataset.data[dataset.data.length - 1].y;
+                            ctx.fillStyle = '#ffffff';
+                            ctx.strokeStyle = dataset.borderColor;
+                            ctx.lineWidth = 2;
+                            
+                            const labelText = '$' + value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                            ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+                            const textWidth = ctx.measureText(labelText).width;
+                            
+                            const labelX = badgeX + 30;
+                            const labelY = badgeY;
+                            const labelPadding = 8;
+                            
+                            // Label background
+                            ctx.beginPath();
+                            ctx.roundRect(labelX - labelPadding, labelY - 12, textWidth + labelPadding * 2, 24, 6);
+                            ctx.fill();
+                            ctx.stroke();
+                            
+                            // Label text
+                            ctx.fillStyle = dataset.borderColor;
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+                            ctx.fillText(labelText, labelX + textWidth / 2, labelY);
+                            
+                            ctx.restore();
+                        }
+                    });
+                }
+            };
+            
             // Custom plugin for hover effects
             const hoverLinePlugin = {
                 id: 'hoverLine',
@@ -1081,7 +1166,7 @@
                                 dataset.borderColor = dataset.originalColor;
                             } else {
                                 dataset.borderWidth = 2;
-                                dataset.borderColor = dataset.originalColor + '40'; // Add alpha for dimming
+                                dataset.borderColor = dataset.originalColor + '40';
                             }
                         });
                     } else {
@@ -1103,6 +1188,11 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            right: 150  // Make room for badges and labels
+                        }
+                    },
                     plugins: {
                         legend: {
                             display: false
@@ -1164,7 +1254,7 @@
                         event.native.target.style.cursor = activeElements.length > 0 ? 'pointer' : 'default';
                     }
                 },
-                plugins: [hoverLinePlugin]
+                plugins: [hoverLinePlugin, logoBadgePlugin]
             });
         }
 
