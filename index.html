@@ -1351,20 +1351,33 @@
         function calculatePortfolioValue(model) {
             let value = STARTING_CAPITAL;
             
-            // Subtract amounts from open positions
+            // Subtract amounts from open positions (capital tied up)
             const openPositions = positions.filter(p => p.model === model && p.status === 'open');
             openPositions.forEach(p => {
                 value -= p.amount;
             });
 
-            // Add P&L from open positions
+            // Add unrealized P&L from open positions
             openPositions.forEach(p => {
                 if (p.unrealizedPnL) {
                     value += p.unrealizedPnL;
                 }
             });
 
-            // Add P&L from completed trades
+            // Add realized P&L from completed trades
+            const completed = completedTrades.filter(t => t.model === model);
+            completed.forEach(t => {
+                value += (t.pnl || 0);
+            });
+
+            return value;
+        }
+
+        // For chart - only completed trades, no unrealized P&L
+        function calculateRealizedValue(model) {
+            let value = STARTING_CAPITAL;
+            
+            // Add P&L from completed trades ONLY
             const completed = completedTrades.filter(t => t.model === model);
             completed.forEach(t => {
                 value += (t.pnl || 0);
@@ -1399,42 +1412,70 @@
         function updateChart() {
             const datasets = [];
             
-            // Set time range: last 24 hours
+            // Get the earliest trade timestamp across all models for proper baseline
+            let earliestTimestamp = Date.now();
+            let hasAnyHistory = false;
+            
+            Object.keys(MODELS).forEach(key => {
+                const history = portfolioHistory[key] || [];
+                if (history.length > 0) {
+                    hasAnyHistory = true;
+                    const firstTime = Math.min(...history.map(h => h.timestamp));
+                    if (firstTime < earliestTimestamp) {
+                        earliestTimestamp = firstTime;
+                    }
+                }
+            });
+
+            // If no history at all, show last 7 days
+            if (!hasAnyHistory) {
+                earliestTimestamp = Date.now() - (7 * 24 * 60 * 60 * 1000);
+            }
+
             const now = Date.now();
-            const startTime = now - (24 * 60 * 60 * 1000); // 24 hours ago
             
             // Create datasets for each model
             Object.entries(MODELS).forEach(([key, model]) => {
                 const history = portfolioHistory[key] || [];
                 const data = [];
 
-                // ALWAYS start from 24 hours ago at $500
+                // Start from earliest time at $500
                 data.push({
-                    x: new Date(startTime),
+                    x: new Date(earliestTimestamp),
                     y: STARTING_CAPITAL
                 });
 
-                // Add any historical data points that exist
+                // ONLY add points for COMPLETED TRADES (from portfolio history)
+                // Portfolio history should ONLY be updated when trades close, not when opened
                 if (history.length > 0) {
-                    // Filter history to only last 24 hours and sort
-                    const recentHistory = history
-                        .filter(h => h.timestamp >= startTime)
+                    const sortedHistory = [...history]
                         .sort((a, b) => a.timestamp - b.timestamp);
                     
-                    recentHistory.forEach(h => {
-                        data.push({
-                            x: new Date(h.timestamp),
-                            y: h.value
-                        });
+                    let runningValue = STARTING_CAPITAL;
+                    
+                    sortedHistory.forEach(h => {
+                        // Only add if it's a trade completion event
+                        if (h.event === 'trade_completed' || h.event === 'bet_resolved') {
+                            data.push({
+                                x: new Date(h.timestamp),
+                                y: h.value
+                            });
+                            runningValue = h.value;
+                        }
+                    });
+                    
+                    // Add current point at end with last known value
+                    data.push({
+                        x: new Date(now),
+                        y: runningValue
+                    });
+                } else {
+                    // No trades completed yet - flat line
+                    data.push({
+                        x: new Date(now),
+                        y: STARTING_CAPITAL
                     });
                 }
-
-                // ALWAYS end at current time with current value
-                const currentValue = calculatePortfolioValue(key);
-                data.push({
-                    x: new Date(now),
-                    y: currentValue
-                });
 
                 datasets.push({
                     label: model.name,
@@ -1448,15 +1489,16 @@
                     pointHoverBackgroundColor: model.color,
                     pointHoverBorderColor: '#ffffff',
                     pointHoverBorderWidth: 2,
-                    tension: 0.4,
-                    fill: false
+                    tension: 0.1, // Less smooth, more accurate to actual changes
+                    fill: false,
+                    stepped: false
                 });
             });
 
             chart.data.datasets = datasets;
             
-            // Force update the time scale to show full 24 hours
-            chart.options.scales.x.min = new Date(startTime);
+            // Set time range dynamically
+            chart.options.scales.x.min = new Date(earliestTimestamp);
             chart.options.scales.x.max = new Date(now);
             
             chart.update('none');
