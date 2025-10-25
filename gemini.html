@@ -432,9 +432,9 @@
         <!-- Model Header -->
         <div class="model-header">
             <div class="model-info">
-                <img src="https://cdn.prod.website-files.com/674396c59212c6ea348b24e0/68fd2a0b910ca03ae4e09e9b_claude-logo.png" alt="Claude" class="model-icon">
+                <img src="" alt="Model Icon" class="model-icon" id="modelIconImg">
                 <div class="model-details">
-                    <h1 id="modelName">CLAUDE 4.5 Sonnet</h1>
+                    <h1 id="modelName">Loading...</h1>
                     <div class="model-stats">
                         Total Account Value: <strong id="accountValue">$0.00</strong> | 
                         Available Cash: <strong id="availableCash">$0.00</strong>
@@ -567,8 +567,62 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        const MODEL_KEY = 'gemini'; // Change this for each model page
+        // AUTO-DETECT MODEL FROM URL
+        const pageFilename = window.location.pathname.split('/').pop().replace('.html', '');
+        const MODEL_KEY = pageFilename; // Will be 'claude', 'deepseek', 'gemini', etc.
+        
+        const MODELS = {
+            'claude': { 
+                name: 'Claude 4.5 Sonnet', 
+                icon: 'https://cdn.prod.website-files.com/674396c59212c6ea348b24e0/68fd2a0b910ca03ae4e09e9b_claude-logo.png', 
+                color: '#D97706',
+                polymarket: '',
+                wallet: ''
+            },
+            'deepseek': { 
+                name: 'DeepSeek V3.1 Chat', 
+                icon: 'https://cdn.prod.website-files.com/674396c59212c6ea348b24e0/68fd2a0ba47c3cdf1b79bc10_deepseek-logo-icon.webp', 
+                color: '#3B82F6',
+                polymarket: '',
+                wallet: ''
+            },
+            'gemini': { 
+                name: 'Gemini 2.5 Pro', 
+                icon: 'https://cdn.prod.website-files.com/674396c59212c6ea348b24e0/68fd2a0b6e27f50c145c7a63_gemini-icon-on-a-transparent-background-free-png.webp', 
+                color: '#8B5CF6',
+                polymarket: '',
+                wallet: ''
+            },
+            'gpt5': { 
+                name: 'GPT 5', 
+                icon: 'https://cdn.prod.website-files.com/674396c59212c6ea348b24e0/68fd2a0ba6fa5fb2fe258eca_ChatGPT_logo.svg.png', 
+                color: '#10B981',
+                polymarket: '',
+                wallet: ''
+            },
+            'grok': { 
+                name: 'Grok 4', 
+                icon: 'https://cdn.prod.website-files.com/674396c59212c6ea348b24e0/68fd2a0bc48c6f7c6ba0a638_grok-icon.webp', 
+                color: '#1F2937',
+                polymarket: '',
+                wallet: ''
+            },
+            'qwen': { 
+                name: 'Qwen 3 Max', 
+                icon: 'https://cdn.prod.website-files.com/674396c59212c6ea348b24e0/68fd2a0b0c449af143e2c948_qwen_logo.jpeg', 
+                color: '#06B6D4',
+                polymarket: '',
+                wallet: ''
+            }
+        };
+
         const STARTING_CAPITAL = 1000;
+        const currentModel = MODELS[MODEL_KEY];
+
+        // Update page title and header with correct model
+        document.title = currentModel.name + ' - Poly Arena';
+        document.getElementById('modelName').textContent = currentModel.name.toUpperCase();
+        document.getElementById('modelIconImg').src = currentModel.icon;
 
         let positions = [];
         let completedTrades = [];
