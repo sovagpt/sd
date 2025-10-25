@@ -421,6 +421,15 @@
                     <textarea id="context" placeholder="Recent news, data points, or context to help the AI explain the bet..."></textarea>
                 </div>
 
+                <div class="form-group">
+                    <label>MANUAL REASONING (optional - use if API fails or you want custom text)</label>
+                    <textarea id="manualReasoning" placeholder="E.g., 'I'm backing Aspinall at 51% because he has a 7-inch reach advantage and finished his last 4 opponents in under 2 rounds. At these odds, I estimate 65% true win probability, giving us 14 points of edge.'" rows="4"></textarea>
+                    <small style="color: #666; font-size: 11px; display: block; margin-top: 5px;">
+                        ⚠️ Leave blank to auto-generate with AI (requires working API key)<br>
+                        Or fill in to use your own reasoning text
+                    </small>
+                </div>
+
                 <button type="submit" id="submitBtn">Place Bet & Generate AI Reasoning</button>
             </form>
         </div>
