@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Portfolio History - Poly Arena</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #00ff00;
+        }
+        h1 {
+            color: #00ff00;
+        }
+        .record {
+            background: #2a2a2a;
+            border: 1px solid #00ff00;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .model {
+            color: #ffff00;
+            font-weight: bold;
+        }
+        button {
+            background: #00ff00;
+            color: #1a1a1a;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #00cc00;
+        }
+        .delete-btn {
+            background: #ff0000;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>📊 Portfolio History Debug</h1>
+    <button onclick="loadHistory()">Refresh Data</button>
+    <button onclick="window.location.href='index.html'">Back to Index</button>
+    <button class="delete-btn" onclick="deleteOldBetPlaced()">Delete Old "bet_placed" Events</button>
+    
+    <h2>All Portfolio History Records:</h2>
+    <div id="output"></div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCyy8cLIysP2bvvLluxSRCDmTMC1Uk4Pts",
+            authDomain: "polyarena-a6f2e.firebaseapp.com",
+            projectId: "polyarena-a6f2e",
+            storageBucket: "polyarena-a6f2e.firebasestorage.app",
+            messagingSenderId: "839597440507",
+            appId: "1:839597440507:web:a430859b4cc54d3d449f5e",
+            measurementId: "G-01XVPSTKJM"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        async function loadHistory() {
+            const output = document.getElementById('output');
+            output.innerHTML = '<p>Loading...</p>';
+
+            try {
+                const snapshot = await db.collection('portfolioHistory').orderBy('timestamp', 'desc').get();
+                
+                if (snapshot.empty) {
+                    output.innerHTML = '<p style="color: #ff0000;">NO PORTFOLIO HISTORY FOUND!</p><p>This is why the chart is flat. You need to resolve some bets to create history.</p>';
+                    return;
+                }
+
+                let html = `<p>Found ${snapshot.size} records:</p>`;
+                
+                snapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    const date = new Date(data.timestamp).toLocaleString();
+                    html += `
+                        <div class="record">
+                            <strong>ID:</strong> ${doc.id}<br>
+                            <strong>Model:</strong> <span class="model">${data.model}</span><br>
+                            <strong>Value:</strong> $${data.value?.toFixed(2) || 'N/A'}<br>
+                            <strong>Event:</strong> ${data.event || 'N/A'}<br>
+                            <strong>Time:</strong> ${date}<br>
+                            <strong>Position ID:</strong> ${data.positionId || 'N/A'}
+                        </div>
+                    `;
+                });
+
+                output.innerHTML = html;
+            } catch (error) {
+                output.innerHTML = `<p style="color: #ff0000;">Error: ${error.message}</p>`;
+                console.error(error);
+            }
+        }
+
+        async function deleteOldBetPlaced() {
+            if (!confirm('Delete all "bet_placed" events? This will clean up old records that should not affect the chart.')) {
+                return;
+            }
+
+            try {
+                const snapshot = await db.collection('portfolioHistory').where('event', '==', 'bet_placed').get();
+                
+                const batch = db.batch();
+                snapshot.docs.forEach(doc => {
+                    batch.delete(doc.ref);
+                });
+                
+                await batch.commit();
+                alert(`Deleted ${snapshot.size} old "bet_placed" events!`);
+                loadHistory();
+            } catch (error) {
+                alert('Error: ' + error.message);
+                console.error(error);
+            }
+        }
+
+        // Load on page load
+        loadHistory();
+    </script>
+</body>
+</html>
