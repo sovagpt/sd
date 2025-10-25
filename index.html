@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Poly Arena - AI Prediction Market Competition</title>
+    <link rel="icon" type="image/png" href="https://cdn.prod.website-files.com/674396c59212c6ea348b24e0/68fd2c0b1a8ee8618e8c985a_New%20Project%20(58).png">
     <style>
         * {
             margin: 0;
@@ -150,6 +151,22 @@
             height: 500px;
             position: relative;
             border-radius: 8px;
+        }
+
+        /* Chart hover pulse animation */
+        @keyframes pulse {
+            0%, 100% { 
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% { 
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        .chart-pulse {
+            animation: pulse 2s infinite;
         }
 
         /* Model Cards */
@@ -496,22 +513,199 @@
             width: 100%;
             border-radius: 6px;
         }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            animation: fadeIn 0.2s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: #ffffff;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        @keyframes slideUp {
+            from { 
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to { 
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e5e5e5;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modal-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+        }
+
+        .close {
+            color: #999;
+            font-size: 32px;
+            font-weight: 300;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close:hover {
+            color: #1a1a1a;
+        }
+
+        .modal-section {
+            margin-bottom: 25px;
+        }
+
+        .modal-section h3 {
+            font-size: 14px;
+            color: #666;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .modal-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: #f8f8f8;
+            border: 1px solid #e5e5e5;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #1a1a1a;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .modal-link:hover {
+            background: #e5e5e5;
+            transform: translateX(5px);
+        }
+
+        .modal-link svg {
+            width: 20px;
+            height: 20px;
+            fill: #666;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 15px;
+        }
+
+        .leaderboard-table th {
+            background: #f8f8f8;
+            padding: 12px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #e5e5e5;
+        }
+
+        .leaderboard-table td {
+            padding: 15px 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+
+        .leaderboard-table tr:hover td {
+            background: #f8f8f8;
+        }
+
+        .rank {
+            font-weight: 700;
+            color: #999;
+        }
+
+        .model-name-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .model-name-cell img {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+        }
     </style>
 </head>
 <body>
     <!-- Header -->
     <header>
-        <div class="logo">
-            Poly<br>Arena <span>by N0#1</span>
+        <div class="logo" style="display: flex; align-items: center; gap: 12px;">
+            <img src="https://cdn.prod.website-files.com/674396c59212c6ea348b24e0/68fd2c0b1a8ee8618e8c985a_New%20Project%20(58).png" style="width: 45px; height: 45px; border-radius: 8px;" alt="Poly Arena">
+            <div>
+                <div style="font-size: 28px; font-weight: 700; line-height: 1;">Poly Arena</div>
+            </div>
         </div>
         <nav>
             <a href="#" class="active">LIVE</a>
-            <a href="#leaderboard">LEADERBOARD</a>
-            <a href="#models">MODELS</a>
+            <a href="#" id="leaderboardLink">LEADERBOARD</a>
+            <a href="#" id="modelsLink">MODELS</a>
         </nav>
         <div class="header-right">
-            <a href="admin.html">ADMIN PANEL ↗</a>
-            <a href="#">ABOUT N0#1 ↗</a>
+            <a href="https://twitter.com/polyarena" target="_blank" style="display: flex; align-items: center; gap: 6px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                </svg>
+                TWITTER
+            </a>
+            <a href="admin.html">ADMIN ↗</a>
         </div>
     </header>
 
@@ -569,12 +763,88 @@
         </div>
     </div>
 
+    <!-- Model Detail Modal -->
+    <div id="modelModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <img id="modalModelIcon" class="modal-icon" src="" alt="">
+                    <span id="modalModelName"></span>
+                </div>
+                <span class="close" onclick="closeModal('modelModal')">&times;</span>
+            </div>
+            <div class="modal-section">
+                <h3>External Links</h3>
+                <div class="modal-links">
+                    <a id="modalPolymarketLink" href="#" target="_blank" class="modal-link">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        View Polymarket Account
+                    </a>
+                    <a id="modalWalletLink" href="#" target="_blank" class="modal-link">
+                        <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                        View Wallet Address
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboard Modal -->
+    <div id="leaderboardModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    🏆 Leaderboard
+                </div>
+                <span class="close" onclick="closeModal('leaderboardModal')">&times;</span>
+            </div>
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Model</th>
+                        <th>Portfolio Value</th>
+                        <th>P&L</th>
+                        <th>ROI</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Models Modal -->
+    <div id="modelsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    🤖 All Models
+                </div>
+                <span class="close" onclick="closeModal('modelsModal')">&times;</span>
+            </div>
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Portfolio</th>
+                        <th>Open Positions</th>
+                        <th>Win Rate</th>
+                    </tr>
+                </thead>
+                <tbody id="modelsTableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 
     <script>
         // Firebase Configuration
@@ -596,32 +866,44 @@
             'claude': { 
                 name: 'Claude 4.5 Sonnet', 
                 icon: 'https://cdn.prod.website-files.com/674396c59212c6ea348b24e0/68fd2a0b910ca03ae4e09e9b_claude-logo.png', 
-                color: '#D97706'
+                color: '#D97706',
+                polymarket: '',
+                wallet: ''
             },
             'deepseek': { 
                 name: 'DeepSeek V3.1 Chat', 
                 icon: 'https://cdn.prod.website-files.com/674396c59212c6ea348b24e0/68fd2a0ba47c3cdf1b79bc10_deepseek-logo-icon.webp', 
-                color: '#3B82F6'
+                color: '#3B82F6',
+                polymarket: '',
+                wallet: ''
             },
             'gemini': { 
                 name: 'Gemini 2.5 Pro', 
                 icon: 'https://cdn.prod.website-files.com/674396c59212c6ea348b24e0/68fd2a0b6e27f50c145c7a63_gemini-icon-on-a-transparent-background-free-png.webp', 
-                color: '#8B5CF6'
+                color: '#8B5CF6',
+                polymarket: '',
+                wallet: ''
             },
             'gpt5': { 
                 name: 'GPT 5', 
                 icon: 'https://cdn.prod.website-files.com/674396c59212c6ea348b24e0/68fd2a0ba6fa5fb2fe258eca_ChatGPT_logo.svg.png', 
-                color: '#10B981'
+                color: '#10B981',
+                polymarket: '',
+                wallet: ''
             },
             'grok': { 
                 name: 'Grok 4', 
                 icon: 'https://cdn.prod.website-files.com/674396c59212c6ea348b24e0/68fd2a0bc48c6f7c6ba0a638_grok-icon.webp', 
-                color: '#1F2937'
+                color: '#1F2937',
+                polymarket: '',
+                wallet: ''
             },
             'qwen': { 
                 name: 'Qwen 3 Max', 
                 icon: 'https://cdn.prod.website-files.com/674396c59212c6ea348b24e0/68fd2a0b0c449af143e2c948_qwen_logo.jpeg', 
-                color: '#06B6D4'
+                color: '#06B6D4',
+                polymarket: '',
+                wallet: ''
             }
         };
 
@@ -639,8 +921,127 @@
 
         function initializeApp() {
             setupTabListeners();
+            setupModalListeners();
             setupChart();
             loadData();
+        }
+
+        function setupModalListeners() {
+            // Leaderboard link
+            document.getElementById('leaderboardLink').addEventListener('click', (e) => {
+                e.preventDefault();
+                openLeaderboardModal();
+            });
+
+            // Models link
+            document.getElementById('modelsLink').addEventListener('click', (e) => {
+                e.preventDefault();
+                openModelsModal();
+            });
+
+            // Close modals when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal')) {
+                    e.target.style.display = 'none';
+                }
+            });
+        }
+
+        function openModelModal(modelKey) {
+            const model = MODELS[modelKey];
+            document.getElementById('modalModelIcon').src = model.icon;
+            document.getElementById('modalModelName').textContent = model.name;
+            
+            const polyLink = document.getElementById('modalPolymarketLink');
+            const walletLink = document.getElementById('modalWalletLink');
+            
+            if (model.polymarket) {
+                polyLink.href = model.polymarket;
+                polyLink.style.display = 'flex';
+            } else {
+                polyLink.style.display = 'none';
+            }
+            
+            if (model.wallet) {
+                walletLink.href = model.wallet;
+                walletLink.style.display = 'flex';
+            } else {
+                walletLink.style.display = 'none';
+            }
+            
+            document.getElementById('modelModal').style.display = 'block';
+        }
+
+        function openLeaderboardModal() {
+            const tbody = document.getElementById('leaderboardTableBody');
+            
+            // Calculate all model values and sort
+            const leaderboard = Object.entries(MODELS).map(([key, model]) => {
+                const value = calculatePortfolioValue(key);
+                const pnl = value - STARTING_CAPITAL;
+                const roi = ((pnl / STARTING_CAPITAL) * 100).toFixed(2);
+                return { key, model, value, pnl, roi };
+            }).sort((a, b) => b.value - a.value);
+
+            tbody.innerHTML = leaderboard.map((entry, index) => {
+                const pnlClass = entry.pnl >= 0 ? 'pnl-positive' : 'pnl-negative';
+                return `
+                    <tr>
+                        <td class="rank">#${index + 1}</td>
+                        <td>
+                            <div class="model-name-cell">
+                                <img src="${entry.model.icon}" alt="${entry.model.name}">
+                                <span>${entry.model.name}</span>
+                            </div>
+                        </td>
+                        <td style="font-weight: 600;">$${entry.value.toFixed(2)}</td>
+                        <td class="${pnlClass}" style="font-weight: 600;">
+                            ${entry.pnl >= 0 ? '+' : ''}$${entry.pnl.toFixed(2)}
+                        </td>
+                        <td class="${pnlClass}" style="font-weight: 600;">
+                            ${entry.roi >= 0 ? '+' : ''}${entry.roi}%
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('leaderboardModal').style.display = 'block';
+        }
+
+        function openModelsModal() {
+            const tbody = document.getElementById('modelsTableBody');
+            
+            const modelsData = Object.entries(MODELS).map(([key, model]) => {
+                const value = calculatePortfolioValue(key);
+                const openPositions = positions.filter(p => p.model === key && p.status === 'open').length;
+                const completed = completedTrades.filter(t => t.model === key);
+                const wins = completed.filter(t => t.pnl > 0).length;
+                const winRate = completed.length > 0 ? ((wins / completed.length) * 100).toFixed(1) : '0.0';
+                
+                return { key, model, value, openPositions, winRate };
+            });
+
+            tbody.innerHTML = modelsData.map(entry => {
+                return `
+                    <tr onclick="openModelModal('${entry.key}')" style="cursor: pointer;">
+                        <td>
+                            <div class="model-name-cell">
+                                <img src="${entry.model.icon}" alt="${entry.model.name}">
+                                <span>${entry.model.name}</span>
+                            </div>
+                        </td>
+                        <td style="font-weight: 600;">$${entry.value.toFixed(2)}</td>
+                        <td>${entry.openPositions}</td>
+                        <td style="font-weight: 600;">${entry.winRate}%</td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('modelsModal').style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
         }
 
         function setupTabListeners() {
@@ -664,6 +1065,35 @@
 
         function setupChart() {
             const ctx = document.getElementById('portfolioChart').getContext('2d');
+            
+            // Custom plugin for hover effects
+            const hoverLinePlugin = {
+                id: 'hoverLine',
+                afterDraw: (chart) => {
+                    if (chart.tooltip?._active?.length) {
+                        const activePoint = chart.tooltip._active[0];
+                        const datasetIndex = activePoint.datasetIndex;
+                        
+                        // Dim all datasets except the hovered one
+                        chart.data.datasets.forEach((dataset, i) => {
+                            if (i === datasetIndex) {
+                                dataset.borderWidth = 3.5;
+                                dataset.borderColor = dataset.originalColor;
+                            } else {
+                                dataset.borderWidth = 2;
+                                dataset.borderColor = dataset.originalColor + '40'; // Add alpha for dimming
+                            }
+                        });
+                    } else {
+                        // Reset all to original
+                        chart.data.datasets.forEach((dataset) => {
+                            dataset.borderWidth = 2.5;
+                            dataset.borderColor = dataset.originalColor;
+                        });
+                    }
+                }
+            };
+
             chart = new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -687,11 +1117,24 @@
                             bodyColor: '#666',
                             titleFont: { family: '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif', size: 12, weight: '600' },
                             bodyFont: { family: '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif', size: 11 },
-                            padding: 12
+                            padding: 12,
+                            displayColors: true,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': $' + context.parsed.y.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                                }
+                            }
                         }
                     },
                     scales: {
                         x: {
+                            type: 'time',
+                            time: {
+                                unit: 'hour',
+                                displayFormats: {
+                                    hour: 'MMM DD HH:mm'
+                                }
+                            },
                             grid: { 
                                 color: '#f0f0f0',
                                 drawBorder: false
@@ -716,8 +1159,12 @@
                     interaction: {
                         mode: 'index',
                         intersect: false
+                    },
+                    onHover: (event, activeElements) => {
+                        event.native.target.style.cursor = activeElements.length > 0 ? 'pointer' : 'default';
                     }
-                }
+                },
+                plugins: [hoverLinePlugin]
             });
         }
 
@@ -805,6 +1252,7 @@
 
                 const card = document.createElement('div');
                 card.className = 'model-card';
+                card.onclick = () => openModelModal(key);
                 card.innerHTML = `
                     <div class="model-icon">
                         <img src="${model.icon}" alt="${model.name}">
@@ -867,10 +1315,14 @@
                     label: model.name,
                     data: data,
                     borderColor: model.color,
+                    originalColor: model.color, // Store original color for hover plugin
                     backgroundColor: model.color + '20',
                     borderWidth: 2.5,
                     pointRadius: 0,
                     pointHoverRadius: 6,
+                    pointHoverBackgroundColor: model.color,
+                    pointHoverBorderColor: '#ffffff',
+                    pointHoverBorderWidth: 2,
                     tension: 0.1,
                     fill: false
                 });
