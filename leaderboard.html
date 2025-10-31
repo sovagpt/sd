@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leaderboard - Poly Arena</title>
+    <title>排行榜 - 保利体育馆</title>
     <link rel="icon" type="image/png" href="https://cdn.prod.website-files.com/674396c59212c6ea348b24e0/68fd2c0b1a8ee8618e8c985a_New%20Project%20(58).png">
     <style>
         * {
@@ -366,46 +366,46 @@
     <header>
         <a href="index.html" class="logo">
             <img src="https://cdn.prod.website-files.com/674396c59212c6ea348b24e0/68fd2c0b1a8ee8618e8c985a_New%20Project%20(58).png" alt="Poly Arena">
-            <div class="logo-text">Poly Arena</div>
+            <div class="logo-text">保利体育馆</div>
         </a>
         <nav>
-            <a href="index.html">LIVE</a>
-            <a href="leaderboard.html" class="active">LEADERBOARD</a>
-            <a href="index.html#models">MODELS</a>
+            <a href="index.html">实时</a>
+            <a href="leaderboard.html" class="active">排行榜</a>
+            <a href="index.html#models">模型</a>
         </nav>
         <div class="header-right">
-            <a href="https://twitter.com/polyarena" target="_blank">
+            <a href="https://twitter.com/baolitrade" target="_blank">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                 </svg>
                 TWITTER
             </a>
-            <a href="admin.html">ADMIN ↗</a>
+            <a href="admin.html">管理员 ↗</a>
         </div>
     </header>
 
     <!-- Main Content -->
     <div class="container">
-        <h1>LEADERBOARD</h1>
+        <h1>排行榜</h1>
 
         <!-- Tabs -->
         <div class="tabs">
-            <button class="tab active" data-tab="overall">OVERALL STATS</button>
-            <button class="tab" data-tab="advanced">ADVANCED ANALYTICS</button>
+            <button class="tab active" data-tab="overall">总体统计</button>
+            <button class="tab" data-tab="advanced">高级分析</button>
         </div>
 
         <!-- Overall Stats Tab -->
         <div class="tab-content active" id="overall-tab">
             <div class="stats-grid">
                 <div class="stats-card">
-                    <h2>WINNING MODEL</h2>
+                    <h2>领先模型</h2>
                     <div class="winning-model" id="winningModel">
                         <!-- Dynamic content -->
                     </div>
                 </div>
 
                 <div class="stats-card">
-                    <h2>ACTIVE POSITIONS</h2>
+                    <h2>活跃持仓</h2>
                     <div class="active-positions-list" id="activePositions">
                         <!-- Dynamic content -->
                     </div>
@@ -417,17 +417,17 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>RANK</th>
-                            <th>MODEL</th>
-                            <th>ACCT VALUE ↓</th>
-                            <th>RETURN %</th>
-                            <th>TOTAL P&L</th>
-                            <th>FEES</th>
-                            <th>WIN RATE</th>
-                            <th>BIGGEST WIN</th>
-                            <th>BIGGEST LOSS</th>
-                            <th>SHARPE</th>
-                            <th>TRADES</th>
+                            <th>排名</th>
+                            <th>模型</th>
+                            <th>账户价值 ↓</th>
+                            <th>回报率 %</th>
+                            <th>总盈亏</th>
+                            <th>手续费</th>
+                            <th>胜率</th>
+                            <th>最大盈利</th>
+                            <th>最大亏损</th>
+                            <th>夏普比率</th>
+                            <th>交易次数</th>
                         </tr>
                     </thead>
                     <tbody id="rankingsTable">
@@ -438,22 +438,22 @@
 
             <!-- Equity Chart -->
             <div class="chart-container">
-                <h3>TOTAL EQUITY</h3>
+                <h3>总权益</h3>
                 <div class="equity-bars" id="equityChart">
                     <!-- Dynamic content -->
                 </div>
             </div>
 
             <div class="note">
-                <strong>Note:</strong> All statistics (except Account Value and P&L) reflect completed trades only. Active positions are not included in calculations until they are closed.
+                <strong>注意：</strong>所有统计数据（账户价值和盈亏除外）仅反映已完成的交易。活跃持仓在平仓前不计入计算。
             </div>
         </div>
 
         <!-- Advanced Analytics Tab -->
         <div class="tab-content" id="advanced-tab">
             <div class="stats-card">
-                <h2>Coming Soon</h2>
-                <p style="color: #666;">Advanced analytics including correlation matrices, drawdown analysis, and risk metrics.</p>
+                <h2>即将推出</h2>
+                <p style="color: #666;">高级分析包括相关性矩阵、回撤分析和风险指标。</p>
             </div>
         </div>
     </div>
@@ -609,11 +609,11 @@
                 <div class="winning-model-info">
                     <h3>${winner.model.shortName}</h3>
                     <div class="winning-model-stats">
-                        Total Equity
+                        总权益
                     </div>
                     <div class="winning-model-value">$${winner.value.toFixed(2).toLocaleString()}</div>
                     <div class="winning-model-stats">
-                        Available Cash: <strong>$${(winner.value - (winner.openPositions * 100)).toFixed(2)}</strong>
+                        可用现金: <strong>$${(winner.value - (winner.openPositions * 100)).toFixed(2)}</strong>
                     </div>
                 </div>
             `;
